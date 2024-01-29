@@ -1,0 +1,24 @@
+{
+  "name": "fis-lunch-manager-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo 'No build steps for a plain Express.js app.'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "date-fns": "^3.3.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "moment": "^2.30.1",
+    "mongodb": "^6.3.0",
+    "react-datepicker": "^4.25.0"
+  }
+}
