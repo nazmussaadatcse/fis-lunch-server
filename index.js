@@ -93,14 +93,30 @@ async function run() {
             }
 
             const emailExists = existing.data.some(item => item.email === lunch.email);
+            const guestExists = existing.data.some(item => item.email === 'guest@gmail.com');
+
 
             if (!emailExists) {
-
+                // Add new lunch for the guest if they don't exist
                 const result = await lunchesCollection.updateOne(
                     { date: formattedDate },
                     { $push: { data: lunch } }
                 );
+                return res.send(result);
+            }
 
+            if (guestExists) {
+                const result = await lunchesCollection.updateOne(
+                    { date: formattedDate, 'data.email': 'guest@gmail.com' },
+                    {
+                        $set: {
+                            'data.$.name': lunch.name,
+                            'data.$.note': lunch.note,
+                            'data.$.lunchQuantity': lunch.lunchQuantity,
+                            'data.$.modifiedCount': (existing.data.find(item => item.email === 'guest@gmail.com')?.modifiedCount || 0) + 1
+                        }
+                    }
+                );
                 return res.send(result);
             }
 
