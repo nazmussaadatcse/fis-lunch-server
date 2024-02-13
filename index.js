@@ -42,6 +42,7 @@ async function run() {
         // const lunchesCollection = client.db("fisLunchManager").collection("lunches");
         const usersCollection = client.db("devFIS_Manager").collection("users");
         const lunchesCollection = client.db("devFIS_Manager").collection("lunches");
+        const itemsCollection = client.db("devFIS_Manager").collection("items");
 
 
         // get single / current day lunch data
@@ -209,6 +210,18 @@ async function run() {
         // get api to get users from DB 
         app.get('/users', async (req, res) => {
             const result = await usersCollection.find().toArray();
+            res.send(result)
+
+        })
+
+        app.post('/items', async (req, res) => {
+            const item = req.body;
+            const result = await itemsCollection.insertOne(item);
+            res.send(result);
+
+        })
+        app.get('/items', async (req, res) => {
+            const result = await itemsCollection.find().toArray();
             res.send(result)
 
         })
