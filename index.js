@@ -38,12 +38,14 @@ async function run() {
         // await client.connect();
         client.connect();
 
-        const usersCollection = client.db("fisLunchManager").collection("users");
-        const lunchesCollection = client.db("fisLunchManager").collection("lunches");
+        // const usersCollection = client.db("fisLunchManager").collection("users");
+        // const lunchesCollection = client.db("fisLunchManager").collection("lunches");
+        const usersCollection = client.db("devFIS_Manager").collection("users");
+        const lunchesCollection = client.db("devFIS_Manager").collection("lunches");
 
 
         // get single / current day lunch data
-        app.get('/lunch', limiter, async (req, res) => {
+        app.get('/lunch', async (req, res) => {
 
             const dateToday = new Date().toLocaleDateString(); //get date only
             console.log(dateToday);
@@ -54,7 +56,7 @@ async function run() {
         })
 
         // get month based lunch data 
-        app.get('/monthly', limiter, async (req, res) => {
+        app.get('/monthly', async (req, res) => {
             const date = req.query.date;
 
             // const [month, year] = selectedMonth.split('/');
@@ -74,7 +76,7 @@ async function run() {
 
 
 
-        app.post('/lunch', limiter, async (req, res) => {
+        app.post('/lunch', async (req, res) => {
             const lunch = req.body;
 
             const formattedDate = new Date().toLocaleDateString(); //get date only
@@ -127,7 +129,7 @@ async function run() {
 
 
         // post api to save users in DB
-        app.post('/users', limiter, async (req, res) => {
+        app.post('/users', async (req, res) => {
 
             const user = req.body;
 
@@ -141,7 +143,7 @@ async function run() {
 
         })
 
-        app.patch('/userapprove/:id', limiter, async (req, res) => {
+        app.patch('/userapprove/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const updatedUser = {
@@ -154,7 +156,33 @@ async function run() {
 
         })
 
-        app.patch('/usertoadmin/:id', limiter, async (req, res) => {
+        app.patch('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const users = req.body;
+            console.log(users)
+            const query = { _id: new ObjectId(id) }
+            const options = { upsert: true }
+
+            const updatedUser = {
+                $set: {
+                    managerName: users.managerName,
+                    orgType: users.orgType,
+                    orgName: users.orgName,
+                    contactNumber: users.contactNumber,
+                    username: users.username,
+                    map: users.map,
+                    website: users.website,
+                    location: users.location,
+                    date: new Date().toLocaleString(),
+                }
+            }
+            const result = await usersCollection.updateOne(query, updatedUser, options);
+            console.log(result);
+            res.send(result);
+
+        })
+
+        app.patch('/usertoadmin/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const updatedUser = {
@@ -168,7 +196,7 @@ async function run() {
         })
 
         // delete api 
-        app.delete('/users/:id', limiter, async (req, res) => {
+        app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
             const query = {
                 _id: new ObjectId(id)
@@ -179,7 +207,7 @@ async function run() {
 
 
         // get api to get users from DB 
-        app.get('/users', limiter, async (req, res) => {
+        app.get('/users', async (req, res) => {
             const result = await usersCollection.find().toArray();
             res.send(result)
 
@@ -200,7 +228,7 @@ run().catch(console.dir);
 
 
 
-app.get('/', limiter, (req, res) => {
+app.get('/', (req, res) => {
     res.send('FIS Lunch Manage server online!');
 });
 
