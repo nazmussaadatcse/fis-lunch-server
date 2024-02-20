@@ -6,7 +6,7 @@ require('dotenv').config();
 const moment = require('moment');
 const rateLimit = require('express-rate-limit');
 
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 const limiter = rateLimit({
@@ -38,11 +38,11 @@ async function run() {
         // await client.connect();
         client.connect();
 
-        // const usersCollection = client.db("fisLunchManager").collection("users");
-        // const lunchesCollection = client.db("fisLunchManager").collection("lunches");
-        const usersCollection = client.db("devFIS_Manager").collection("users");
-        const lunchesCollection = client.db("devFIS_Manager").collection("lunches");
-        const itemsCollection = client.db("devFIS_Manager").collection("items");
+        const usersCollection = client.db("fisLunchManager").collection("users");
+        const lunchesCollection = client.db("fisLunchManager").collection("lunches");
+        // const usersCollection = client.db("devFIS_Manager").collection("users");
+        // const lunchesCollection = client.db("devFIS_Manager").collection("lunches");
+        // const itemsCollection = client.db("devFIS_Manager").collection("items");
 
 
         // get single / current day lunch data
@@ -108,7 +108,7 @@ async function run() {
                 return res.send(result);
             }
 
-            if (guestExists) {
+            if (guestExists && lunch.email === 'guest@gmail.com') {
                 const result = await lunchesCollection.updateOne(
                     { date: formattedDate, 'data.email': 'guest@gmail.com' },
                     {
